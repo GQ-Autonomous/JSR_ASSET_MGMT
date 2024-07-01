@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@reduxjs/toolkit": "^2.2.5",
+    "framer-motion": "^11.2.12",
+    "qr-scanner": "^1.4.2",
+    "react-redux": "^9.1.2"
+  }
+}
