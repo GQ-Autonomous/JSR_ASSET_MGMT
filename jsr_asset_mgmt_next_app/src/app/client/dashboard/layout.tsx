@@ -1,3 +1,5 @@
+"use client"
+
 import { Box } from "@chakra-ui/react";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";

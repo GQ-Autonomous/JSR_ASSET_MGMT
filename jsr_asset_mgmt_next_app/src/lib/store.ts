@@ -9,6 +9,10 @@ export const makeStore = () => {
   })
 }
 
+const store = makeStore();
+
+export default store;
+
 // Infer the type of makeStore
 export type AppStore = ReturnType<typeof makeStore>
 // Infer the `RootState` and `AppDispatch` types from the store itself

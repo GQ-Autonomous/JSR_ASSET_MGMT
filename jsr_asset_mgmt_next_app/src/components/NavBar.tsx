@@ -108,11 +108,24 @@ const NavBar = () => {
       {isOpen ? (
         <Box pb={4} display={{ lg: "none" }}>
           <Stack as={"nav"} spacing={4}>
-            {LinksManager.map((link) => (
-              <NavLink key={link.name} path={link.path}>
-                {link.name}
-              </NavLink>
-            ))}
+            {user.role === "cleaner" &&
+              LinksCleaner.map((link: { name: string; path: string }) => (
+                <NavLink key={link.name} path={link.path}>
+                  {link.name}
+                </NavLink>
+              ))}
+            {user.role === "supervisor" &&
+              LinksSupervisor.map((link: { name: string; path: string }) => (
+                <NavLink key={link.name} path={link.path}>
+                  {link.name}
+                </NavLink>
+              ))}
+            {user.role === "manager" &&
+              LinksManager.map((link: { name: string; path: string }) => (
+                <NavLink key={link.name} path={link.path}>
+                  {link.name}
+                </NavLink>
+              ))}
             <NavLink key={"logout"} path={"/logout"}>
               {"Logout"}
             </NavLink>

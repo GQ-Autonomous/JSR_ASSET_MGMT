@@ -9,11 +9,11 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  id: 1,
-  firstName: "sample",
-  lastName: "cleaner",
-  role: "cleaner",
-  token: "token"
+  id: 0,
+  firstName: "",
+  lastName: "",
+  role: "",
+  token: ""
 };
 
 const userSlice = createSlice({
