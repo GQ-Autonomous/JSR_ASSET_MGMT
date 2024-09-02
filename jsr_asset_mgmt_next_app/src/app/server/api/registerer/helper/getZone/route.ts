@@ -1,14 +1,24 @@
-import pool from "@/app/server/db/db";
+import { getConnection } from "@/app/server/db/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const { business_id } = await req.json();
+interface ZoneInterface {
+  id: number;
+  zone: string;
+  zone_id: string;
+  status: string;
+  entry_by: number;
+  entry_date: Date;
+  mod_by: number;
+  mod_date: Date;
+}
 
+export async function GET(req: NextRequest) {
   try {
-    const query = await pool.query(
-      `select * from zone_master where business_id = ${business_id}`
-    );
-    const zones = await query[0];
+    const pool = await getConnection();
+    const result = await pool.request().query(`SELECT * FROM tata_asset_mgmt.jusco_asset_mgmt.data_zone`);
+
+    // Assuming result.recordset contains the rows you need
+    const zones: ZoneInterface[] = result.recordset;
 
     return NextResponse.json(
       {

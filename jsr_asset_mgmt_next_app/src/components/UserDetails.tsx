@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 interface UserDetailInterface {
   name: string;
@@ -14,6 +15,8 @@ const UserDetail: UserDetailInterface = {
 
 const UserDetails = () => {
   const [currentTime, setCurrentTime] = useState<string>("");
+
+  const user = useAppSelector((state) => state.user)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,8 +46,8 @@ const UserDetails = () => {
     >
       <Box display={"flex"} gap={4} as="b">
         <Text>{currentTime} |</Text>
-        <Text>{UserDetail.name} |</Text>
-        <Text>{UserDetail.role}</Text>
+        <Text>{user.firstName + " " + user.lastName} |</Text>
+        <Text>{user.role}</Text>
       </Box>
     </Box>
   );

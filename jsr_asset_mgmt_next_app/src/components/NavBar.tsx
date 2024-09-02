@@ -16,17 +16,17 @@ import Link from "next/link";
 import { useAppSelector } from "@/lib/hooks";
 
 const LinksManager = [
-  { name: "Grid Report", path: "/grid-report" },
+  { name: "Grid Report", path: "/client/dashboard/manager/reports" },
   { name: "History Reports", path: "/history-reports" },
   { name: "Feedback Report", path: "/feedback-report" },
   { name: "Google Map", path: "/google-map" },
   { name: "Change Frequency", path: "/change-frequency" },
   { name: "Frequency List", path: "/frequency-list" },
-  { name: "Asset Status", path: "/asset-status" },
+  { name: "Asset Status", path: "/client/dashboard/supervisor/asset-status" },
 ];
 
 const LinksSupervisor = [
-  { name: "My Grid Report", path: "/my-grid-report" },
+  { name: "My Grid Report", path: "/client/dashboard/manager/reports" },
   { name: "My performance reports", path: "/my-performance-report" },
   { name: "Feedback Report", path: "/feedback-report" },
   { name: "My Google Map", path: "/my-google-map" },
@@ -88,7 +88,7 @@ const NavBar = () => {
                   {link.name}
                 </NavLink>
               ))}
-            <NavLink key={"logout"} path={"/logout"}>
+            <NavLink key={"logout"} path={"/client/auth/login"}>
               {"Logout"}
             </NavLink>
           </HStack>

@@ -16,7 +16,9 @@ export default function RootLayout({
       <body className="p-4">
         <StoreProvider>
           <Providers>
-              {children}
+            <NavText />
+            {children}
+            <Footer />
           </Providers>
         </StoreProvider>
       </body>

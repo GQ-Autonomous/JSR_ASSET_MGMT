@@ -10,10 +10,10 @@ interface UserState {
 
 const initialState: UserState = {
   id: 0,
-  firstName: "",
-  lastName: "",
-  role: "",
-  token: ""
+  firstName: "Devraj",
+  lastName: "Srivastawa",
+  role: "manager",
+  token: "token"
 };
 
 const userSlice = createSlice({

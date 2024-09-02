@@ -4,7 +4,7 @@ import { Box, FormControl, FormLabel, Radio, RadioGroup } from "@chakra-ui/react
 import React from "react";
 
 interface RadioQuestionProps {
-  id: string;
+  id: string | number;
   question: string;
   options: string[];
   onChange: (value: string, id: string) => void;

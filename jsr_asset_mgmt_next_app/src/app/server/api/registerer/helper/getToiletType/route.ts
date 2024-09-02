@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-// import pool from "@/app/server/db/db";
+import pool from "@/app/server/db/db";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
-    // const query = await pool.query("select * from city_master");
+    const query = await pool.query("select * from toilet_type");
 
-    // const cities = await query[0];
+    const toilet_type = await query[0];
 
     return NextResponse.json(
       {
-        cities: [
-          {
-            id: 1,
-            name: "jamshedpur",
-          },
-        ],
+        toilet_type: toilet_type,
       },
       {
         status: 200,
