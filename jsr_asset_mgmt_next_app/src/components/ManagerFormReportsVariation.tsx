@@ -13,7 +13,7 @@ import axios from "axios";
 import { useState } from "react";
 import moment from "moment";
 
-const ManagerFormReportsVariation = ({ TableDataHandler, setType, setLoadingTrue, setLoadingFalse }) => {
+const ManagerFormReportsVariation = ({ TableDataHandler, setType, setLoadingTrue, setLoadingFalse, handleVariation, variation }) => {
   const [duration, setDuration] = useState("");
   const [reportType, setReportType] = useState("");
   const toast = useToast();
@@ -106,6 +106,17 @@ const ManagerFormReportsVariation = ({ TableDataHandler, setType, setLoadingTrue
             <option value="">Select</option>
             {duration === "Today" && <option value="All">All</option>}
             <option value="Exception">Exception</option>
+          </Select>
+        </FormControl>
+        <FormControl w={"400px"} isRequired>
+          <FormLabel>Select Duration</FormLabel>
+          <Select
+            value={variation}
+            onChange={(e) => handleVariation(e.target.value)}
+          >
+            <option value="10">10 ft</option>
+            <option value="20">20 ft</option>
+            <option value="30">30 ft</option>
           </Select>
         </FormControl>
         <Box>

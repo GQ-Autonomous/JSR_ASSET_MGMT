@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Box, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Button, ButtonGroup, Center, Spinner } from "@chakra-ui/react";
@@ -30,22 +30,27 @@ const calculateDistanceInFeet = (lat1, lon1, lat2, lon2) => {
   return distanceInFeet.toFixed(2);
 };
 
-const calculateVariation = (distance) => {
-  if (distance === "-") {
-    return "-";
-  }
-
-  const variation = distance - 10;
-  return variation.toFixed(2);
-};
-
 const Home = () => {
   const [tableData, setTableData] = useState([]);
   const [isTableDisplay, setIsTableDisplay] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false); 
   const [type, setType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 100; // Number of rows per page
+  const itemsPerPage = 100; 
+  const [variationn, setVariation] = useState(10);
+
+  const handleVariation = (value) => {
+    setVariation(value)
+  }
+
+  const calculateVariation = (distance) => {
+    if (distance === "-") {
+      return "-";
+    }
+  
+    const variation = distance - variationn;
+    return variation.toFixed(2);
+  };
 
   const TableDataHandler = (data) => {
     setIsTableDisplay(false);
@@ -72,12 +77,7 @@ const Home = () => {
       variation,
       distance,
     };
-  }).filter(data => {
-    if (type === "Exception") {
-      return data.distance !== "-" && data.variation > 0;
-    }
-    return true;
-  });
+  }).filter(data => data.variation > 0);
 
   const totalPages = Math.ceil(filteredTableData.length / itemsPerPage);
   const currentData = useMemo(() => {
@@ -180,7 +180,7 @@ const Home = () => {
 
   return (
     <div>
-      <ManagerFormReportsVariation TableDataHandler={TableDataHandler} setType={setType} setLoadingTrue={setLoadingTrue} setLoadingFalse={setLoadingFalse}/>
+      <ManagerFormReportsVariation TableDataHandler={TableDataHandler} setType={setType} setLoadingTrue={setLoadingTrue} setLoadingFalse={setLoadingFalse} handleVariation={handleVariation} variation={variationn}/>
       {isTableDisplay && <DownloadCSV tableData={filteredTableData} />}
       {isLoading ? (
         <Center h="100vh">
@@ -193,6 +193,7 @@ const Home = () => {
               <Table variant="striped" colorScheme="blue">
                 <Thead>
                   <Tr>
+                    <Th>Sl no.</Th>
                     <Th>Code</Th>
                     <Th>Name</Th>
                     <Th>Location</Th>
@@ -209,6 +210,7 @@ const Home = () => {
                 <Tbody>
                   {currentData.map((data, index) => (
                     <Tr key={index}>
+                      <Td>{index + 1}</Td>
                       <Td>{data.code}</Td>
                       <Td>{data.name}</Td>
                       <Td>{data.locality}</Td>

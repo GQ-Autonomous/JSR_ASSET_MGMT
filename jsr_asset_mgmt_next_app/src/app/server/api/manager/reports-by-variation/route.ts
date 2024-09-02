@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     dl.locality, 
     da.area, 
     dz.zone,
-	du.user_name,
+	du.user_name as supervisor_name,
     CASE 
         WHEN CHARINDEX(',', dal.location) > 0 
         THEN TRY_CAST(SUBSTRING(dal.location, 1, CHARINDEX(',', dal.location) - 1) AS FLOAT) 
@@ -55,9 +55,12 @@ JOIN
 JOIN 
     tata_asset_mgmt.jusco_asset_mgmt.data_zone AS dz 
     ON dz.id = da.zone_id
+JOIN
+	tata_asset_mgmt.jusco_asset_mgmt.matrix_user_asset_id as mua
+	ON mua.asset_id = dal.id 
 JOIN 
     tata_asset_mgmt.jusco_asset_mgmt.data_users AS du 
-    ON du.id = txa.entry_by
+    ON du.id = mua.user_id
 WHERE 
     txa.user_role = 'cleaner' AND
 	txa.entry_date between '${startTime}' AND '${endTime}'`)

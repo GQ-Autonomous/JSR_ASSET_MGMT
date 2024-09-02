@@ -2,7 +2,17 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { Box, Heading, Link, Text, VStack, Card, CardBody, CardHeader, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Link,
+  Text,
+  VStack,
+  Card,
+  CardBody,
+  CardHeader,
+  Stack,
+} from "@chakra-ui/react";
 
 export default function Home() {
   const user = useAppSelector((state) => state.user);
@@ -34,33 +44,45 @@ export default function Home() {
               >
                 Link
               </Link>
-              <Text mt={2}>
-                To check the asset status 
-              </Text>
+              <Text mt={2}>To check the asset status</Text>
             </CardBody>
           </Card>
 
           <Card>
             <CardHeader>
-              <Heading size="md">Cleaning and survey report</Heading>
+              <Heading size="md">Survey report</Heading>
             </CardHeader>
             <CardBody>
               <Link
-                href="/client/dashboard/manager/reports"
+                href="/client/dashboard/manager/survey-report"
                 color="teal.500"
                 fontSize="lg"
               >
                 Link
               </Link>
-              <Text mt={2}>
-                To download cleaning and survey report
-              </Text>
+              <Text mt={2}>To download survey report</Text>
             </CardBody>
           </Card>
 
           <Card>
             <CardHeader>
-              <Heading size="md">Variation Report</Heading>
+              <Heading size="md">Cleaning Report</Heading>
+            </CardHeader>
+            <CardBody>
+              <Link
+                href="/client/dashboard/manager/cleaning-report"
+                color="teal.500"
+                fontSize="lg"
+              >
+                Link
+              </Link>
+              <Text mt={2}>To download cleaning report</Text>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Heading size="md">Reports by variation</Heading>
             </CardHeader>
             <CardBody>
               <Link
@@ -70,9 +92,7 @@ export default function Home() {
               >
                 Link
               </Link>
-              <Text mt={2}>
-                To download report with variation using location
-              </Text>
+              <Text mt={2}>To download reports by variation</Text>
             </CardBody>
           </Card>
         </VStack>
