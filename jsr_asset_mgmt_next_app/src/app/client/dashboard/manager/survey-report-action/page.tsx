@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -10,11 +10,29 @@ import {
   useToast,
   Spinner,
   Center,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Select,
+  Textarea,
+  useDisclosure,
+  Stack,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 const SurveyReportAction = () => {
   const [fromDate, setFromDate] = useState(null);
@@ -22,8 +40,25 @@ const SurveyReportAction = () => {
   const [calendarOpen, setCalendarOpen] = useState("");
   const [apiResponse, setApiResponse] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedSurvey, setSelectedSurvey] = useState(null);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [supervisors, setSupervisors] = useState([]);
+  const [supervisor, setSupervisor] = useState("");
   const toast = useToast();
   const today = new Date();
+
+  const getSupervisors = async () => {
+    try {
+      const res = await axios.get(
+        "/server/api/supervisor/asset-status/getSupervisors"
+      );
+      setSupervisors(res.data.supervisors);
+    } catch (error) {
+      console.error("Error fetching supervisors:", error);
+    }
+  };
 
   const handleDateChange = (date, type) => {
     if (type === "from") {
@@ -50,12 +85,17 @@ const SurveyReportAction = () => {
         const formattedFromDate = format(fromDate, "yyyy-MM-dd");
         const formattedToDate = format(toDate, "yyyy-MM-dd");
 
-        const response = await axios.post("/server/api/manager/reports/surveyReport", {
-          startDate: formattedFromDate,
-          endDate: formattedToDate,
-        });
+        const response = await axios.post(
+          "/server/api/manager/survey-closure-by-supervisor/retriveAverageRating",
+          {
+            startDate: formattedFromDate,
+            endDate: formattedToDate,
+          }
+        );
 
-        setApiResponse(response.data);
+        setApiResponse(response.data.data); // assuming the data comes under `data`
+        console.log(apiResponse);
+
         toast({
           title: "Success",
           description: "The form has been submitted successfully.",
@@ -90,6 +130,89 @@ const SurveyReportAction = () => {
     const maxEndDate = new Date(fromDate);
     maxEndDate.setDate(fromDate.getDate() + 30);
     return date > maxEndDate || date > today;
+  };
+
+  const handleActionClick = (survey) => {
+    setSelectedSurvey(survey);
+    onOpen();
+  };
+
+  const handleSave = async () => {
+    try {
+      // Convert entry_date and entry_time to a Date object
+      // Combine entry_date and entry_time into a single date-time string
+      const entryDateTimeString = `${selectedSurvey.entry_date.split("T")[0]}T${
+        selectedSurvey.entry_time
+      }`;
+
+      // Create a Date object from the combined string
+      const entryDateTime = new Date(entryDateTimeString);
+
+      // Check if the Date object is valid
+      if (isNaN(entryDateTime.getTime())) {
+        throw new Error("Invalid date format");
+      }
+
+      // Format to 'YYYY-MM-DD HH:MM:SS'
+      const year = entryDateTime.getFullYear();
+      const month = String(entryDateTime.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(entryDateTime.getDate()).padStart(2, "0");
+      const hours = String(entryDateTime.getHours()).padStart(2, "0");
+      const minutes = String(entryDateTime.getMinutes()).padStart(2, "0");
+      const seconds = String(entryDateTime.getSeconds()).padStart(2, "0");
+
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      console.log("Formatted Date:", formattedDate);
+      // Assuming you have the endpoint ready for saving the survey data
+      await axios.post(
+        "/server/api/manager/survey-closure-by-supervisor/insertIntoMatrixSurvey",
+        {
+          user_id: supervisor,
+          code: selectedSurvey.code,
+          date: formattedDate, // Use formattedDate here
+          average_rating: selectedSurvey.average_rating,
+          remarks,
+        }
+      );
+
+      toast({
+        title: "Success",
+        description: "Survey data has been saved successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while saving the data.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // Function to format questions_and_ratings
+  const formatQuestionsAndRatings = (questionsAndRatings) => {
+    return questionsAndRatings
+      .split(";")
+      .map((item, index) => <Text key={index}>{item.trim()}</Text>);
+  };
+
+  // Helper function to round average rating
+  const formatAverageRating = (rating) => {
+    return rating.toFixed(2);
+  };
+
+  useEffect(() => {
+    getSupervisors();
+  }, []);
+
+  const handleSupervisorChange = async (e) => {
+    const selectedSupervisor = e.target.value;
+    setSupervisor(selectedSupervisor); // Update supervisor state
   };
 
   return (
@@ -161,15 +284,15 @@ const SurveyReportAction = () => {
       </Box>
 
       <Center>
-      <Button
-        colorScheme="blue"
-        w="full"
-        mt={4}
-        maxW={'400px'}
-        onClick={handleSubmit}
-      >
-        Submit
-      </Button>
+        <Button
+          colorScheme="blue"
+          w="full"
+          mt={4}
+          maxW="400px"
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
       </Center>
 
       {loading && (
@@ -178,7 +301,118 @@ const SurveyReportAction = () => {
         </Box>
       )}
 
-      {/* {apiResponse.length > 0 && <DataTableForSurvey data={apiResponse} loading={loading}/>} */}
+      {!loading && apiResponse.length > 0 && (
+        <Box mt={6}>
+          <div>
+            {apiResponse.map((survey, index) => (
+              <Box
+                key={index}
+                borderWidth="1px"
+                borderRadius="md"
+                p={8}
+                mb={4}
+                boxShadow="md"
+                bg="white"
+              >
+                <Box
+                  display={"flex"}
+                  gap={3}
+                  justifyContent={"space-between"}
+                  flexWrap={"wrap"}
+                >
+                  <Text fontWeight="bold">Code: {survey.code}</Text>
+                  <Box>
+                    <Text fontWeight="bold">Questions and Ratings:</Text>
+                    <Box>
+                      {formatQuestionsAndRatings(survey.questions_and_ratings)}
+                    </Box>
+                  </Box>
+                  <Text fontWeight="bold">
+                    Average Rating: {formatAverageRating(survey.average_rating)}
+                  </Text>
+                  <Box>
+                    <Text fontWeight="bold">Remarks:</Text>
+                    <Text
+                      fontWeight="bold"
+                      noOfLines={1}
+                      title={
+                        survey.remarks.length === 0 ? "NONE" : survey.remarks
+                      }
+                    >
+                      {survey.remarks.length === 0
+                        ? "NONE"
+                        : survey.remarks.length > 20
+                        ? `${survey.remarks.substring(0, 20)}...`
+                        : survey.remarks}
+                    </Text>
+                  </Box>
+                  {survey.resolve_remarks ? (
+                    <Box>
+                      Resolving remarks: <Text>{survey.resolve_remarks}</Text>
+                    </Box>
+                  ) : (
+                    <Button
+                      colorScheme="blue"
+                      onClick={() => handleActionClick(survey)}
+                      isDisabled={survey.average_rating >= 4}
+                    >
+                      Take Action
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            ))}
+          </div>
+        </Box>
+      )}
+
+      {/* Modal for Action */}
+      {selectedSurvey && (
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Action for {selectedSurvey.questions}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl w={"400px"} isRequired>
+                <FormLabel>Select Supervisor</FormLabel>
+                <Select value={supervisor} onChange={handleSupervisorChange}>
+                  <option value="">Select supervisor</option>
+                  {supervisors.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {`${item.user_name}`}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Remarks</FormLabel>
+                <Textarea
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                  placeholder="Enter remarks"
+                />
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  handleSave(), onClose();
+                }}
+              >
+                Save
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 };
