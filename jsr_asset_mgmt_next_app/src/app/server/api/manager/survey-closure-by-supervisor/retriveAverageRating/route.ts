@@ -70,22 +70,21 @@ export async function POST(req: NextRequest) {
       // console.log(formattedDateTime);
 
       if (item.average_rating < 4) {
-        const matrixResult = await pool
-          .request()
-          .query(`
+        const matrixResult = await pool.request().query(`
             SELECT * 
-            FROM tata_asset_mgmt.jusco_asset_mgmt.matrix_survey_close 
+            FROM tata_asset_mgmt.jusco_asset_mgmt.matrix_survey_close as msu
+JOIN tata_asset_mgmt.jusco_asset_mgmt.data_users as du on du.id = msu.user_id
             WHERE code = '${item.code}' AND survey_date = '${formattedDateTime}';
           `);
 
         console.log(formattedDateTime, item.code);
-        
+
         if (matrixResult.recordset.length > 0) {
           console.log(matrixResult.recordset[0].remarks);
 
           item.resolve_remarks = matrixResult.recordset[0].remarks;
+          item.resolving_supervisor = matrixResult.recordset[0].user_name
           // console.log(matrixResult.recordset[0].remarks);
-          
         }
         filteredData.push(item);
       } else {

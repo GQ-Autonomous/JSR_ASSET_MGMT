@@ -341,7 +341,8 @@ const SurveyReportAction = () => {
 
                   {survey.resolve_remarks ? (
                     <Box>
-                      Resolving remarks: <Text>{survey.resolve_remarks}</Text>
+                      <Box><Text fontWeight={"bold"}>Resolving remarks: </Text> <Text>{survey.resolve_remarks}</Text></Box>
+                      <Box><Text fontWeight={"bold"}>Resolving Supervisor: </Text><Text>{survey.resolving_supervisor}</Text></Box>
                     </Box>
                   ) : survey.average_rating >= 4 ? (
                     <div></div>
