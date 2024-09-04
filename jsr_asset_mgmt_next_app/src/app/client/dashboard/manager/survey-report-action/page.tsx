@@ -140,40 +140,33 @@ const SurveyReportAction = () => {
 
   const handleSave = async () => {
     try {
-      // Convert entry_date and entry_time to a Date object
-      // Combine entry_date and entry_time into a single date-time string
       const entryDateTimeString = `${selectedSurvey.entry_date.split("T")[0]}T${
         selectedSurvey.entry_time
       }`;
-
-      // Create a Date object from the combined string
       const entryDateTime = new Date(entryDateTimeString);
 
-      // Check if the Date object is valid
       if (isNaN(entryDateTime.getTime())) {
         throw new Error("Invalid date format");
       }
 
-      // Format to 'YYYY-MM-DD HH:MM:SS'
       const year = entryDateTime.getFullYear();
-      const month = String(entryDateTime.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const month = String(entryDateTime.getMonth() + 1).padStart(2, "0");
       const day = String(entryDateTime.getDate()).padStart(2, "0");
       const hours = String(entryDateTime.getHours()).padStart(2, "0");
       const minutes = String(entryDateTime.getMinutes()).padStart(2, "0");
       const seconds = String(entryDateTime.getSeconds()).padStart(2, "0");
 
       const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      console.log("Formatted Date:", formattedDate);
-      // Assuming you have the endpoint ready for saving the survey data
+
       await axios.post(
         "/server/api/manager/survey-closure-by-supervisor/insertIntoMatrixSurvey",
         {
           user_id: supervisor,
           code: selectedSurvey.code,
-          date: formattedDate, // Use formattedDate here
+          date: formattedDate,
           average_rating: selectedSurvey.average_rating,
           remarks,
-          resolve_date_time: selectedDate
+          resolve_date_time: selectedDate,
         }
       );
 
@@ -184,7 +177,11 @@ const SurveyReportAction = () => {
         duration: 5000,
         isClosable: true,
       });
-      onClose();
+
+      // Reload data after saving
+      await handleSubmit(); // Re-fetch the data
+
+      onClose(); // Close the modal after reloading data
     } catch (error) {
       toast({
         title: "Error",
@@ -332,26 +329,22 @@ const SurveyReportAction = () => {
                   <Text fontWeight="bold">
                     Average Rating: {formatAverageRating(survey.average_rating)}
                   </Text>
-                  <Box>
+                  <Box width={"300px"}>
                     <Text fontWeight="bold">Remarks:</Text>
                     <Text
                       fontWeight="bold"
-                      noOfLines={1}
-                      title={
-                        survey.remarks.length === 0 ? "NONE" : survey.remarks
-                      }
+                      whiteSpace="normal" // Allow text to wrap
                     >
-                      {survey.remarks.length === 0
-                        ? "NONE"
-                        : survey.remarks.length > 20
-                        ? `${survey.remarks.substring(0, 20)}...`
-                        : survey.remarks}
+                      {survey.remarks.length === 0 ? "NONE" : survey.remarks}
                     </Text>
                   </Box>
+
                   {survey.resolve_remarks ? (
                     <Box>
                       Resolving remarks: <Text>{survey.resolve_remarks}</Text>
                     </Box>
+                  ) : survey.average_rating >= 4 ? (
+                    <div></div>
                   ) : (
                     <Button
                       colorScheme="blue"

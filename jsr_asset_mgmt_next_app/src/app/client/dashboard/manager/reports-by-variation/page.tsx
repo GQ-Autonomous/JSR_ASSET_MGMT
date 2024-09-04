@@ -1,9 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Box, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Button, ButtonGroup, Center, Spinner } from "@chakra-ui/react";
-import DownloadCSV from '@/components/DownloadCSV';
-import ManagerFormReportsVariation from '@/components/ManagerFormReportsVariation';
+import React, { useState, useMemo } from "react";
+import {
+  Box,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Button,
+  ButtonGroup,
+  Center,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+import DownloadCSV from "@/components/DownloadCSV";
+import ManagerFormReportsVariation from "@/components/ManagerFormReportsVariation";
 
 const calculateDistanceInFeet = (lat1, lon1, lat2, lon2) => {
   if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) {
@@ -20,8 +34,7 @@ const calculateDistanceInFeet = (lat1, lon1, lat2, lon2) => {
 
   const a =
     Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) *
-    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   const distanceInMeters = R * c;
@@ -33,21 +46,21 @@ const calculateDistanceInFeet = (lat1, lon1, lat2, lon2) => {
 const Home = () => {
   const [tableData, setTableData] = useState([]);
   const [isTableDisplay, setIsTableDisplay] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 100; 
+  const itemsPerPage = 100;
   const [variationn, setVariation] = useState(10);
 
   const handleVariation = (value) => {
-    setVariation(value)
-  }
+    setVariation(value);
+  };
 
   const calculateVariation = (distance) => {
     if (distance === "-") {
       return "-";
     }
-  
+
     const variation = distance - variationn;
     return variation.toFixed(2);
   };
@@ -59,25 +72,32 @@ const Home = () => {
   };
 
   const setLoadingTrue = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setIsTableDisplay(false);
-  }
+  };
 
   const setLoadingFalse = () => {
-    setIsLoading(false)
+    setIsLoading(false);
     setIsTableDisplay(true);
-  }
+  };
 
-  const filteredTableData = tableData.map(data => {
-    const distance = calculateDistanceInFeet(data.dal_latitude, data.dal_longitude, data.scanned_latitude, data.scanned_longitude);
-    const variation = calculateVariation(distance);
-    
-    return {
-      ...data,
-      variation,
-      distance,
-    };
-  }).filter(data => data.variation > 0);
+  const filteredTableData = tableData
+    .map((data) => {
+      const distance = calculateDistanceInFeet(
+        data.dal_latitude,
+        data.dal_longitude,
+        data.scanned_latitude,
+        data.scanned_longitude
+      );
+      const variation = calculateVariation(distance);
+
+      return {
+        ...data,
+        variation,
+        distance,
+      };
+    })
+    .filter((data) => data.variation > 0);
 
   const totalPages = Math.ceil(filteredTableData.length / itemsPerPage);
   const currentData = useMemo(() => {
@@ -180,7 +200,19 @@ const Home = () => {
 
   return (
     <div>
-      <ManagerFormReportsVariation TableDataHandler={TableDataHandler} setType={setType} setLoadingTrue={setLoadingTrue} setLoadingFalse={setLoadingFalse} handleVariation={handleVariation} variation={variationn}/>
+      <Text display={"flex"} p={4} gap={2}>
+        <Text fontWeight={"bold"}>Geolocation exception:</Text> Lists all exceptions where the QR
+        code scanned position/location is 'x' feet away from the
+        original asset location
+      </Text>
+      <ManagerFormReportsVariation
+        TableDataHandler={TableDataHandler}
+        setType={setType}
+        setLoadingTrue={setLoadingTrue}
+        setLoadingFalse={setLoadingFalse}
+        handleVariation={handleVariation}
+        variation={variationn}
+      />
       {isTableDisplay && <DownloadCSV tableData={filteredTableData} />}
       {isLoading ? (
         <Center h="100vh">
@@ -198,8 +230,13 @@ const Home = () => {
                     <Th>Name</Th>
                     <Th>Location</Th>
                     <Th>Zone / Area</Th>
-                    <Th>Registered <br /> Lat/Long</Th>
-                    <Th>Scanned <br /> Lat/Long</Th>
+                    <Th>
+                      Registered <br /> Lat/Long
+                    </Th>
+                    <Th>
+                      Scanned <br /> Lat/Long
+                    </Th>
+                    <Th>Distance</Th>
                     <Th>Variation</Th>
                     <Th>Scanned By</Th>
                     <Th>Scanned Date</Th>
@@ -215,9 +252,22 @@ const Home = () => {
                       <Td>{data.name}</Td>
                       <Td>{data.locality}</Td>
                       <Td>{`${data.zone} / ${data.area}`}</Td>
-                      <Td>{data.dal_latitude && data.dal_longitude ? `${data.dal_latitude}, ${data.dal_longitude}` : "-"}</Td>
-                      <Td>{data.scanned_latitude && data.scanned_longitude ? `${data.scanned_latitude}, ${data.scanned_longitude}` : "-"}</Td>
-                      <Td>{data.variation !== "-" ? `${data.variation} ft` : "-"}</Td>
+                      <Td>
+                        {data.dal_latitude && data.dal_longitude
+                          ? `${data.dal_latitude}, ${data.dal_longitude}`
+                          : "-"}
+                      </Td>
+                      <Td>
+                        {data.scanned_latitude && data.scanned_longitude
+                          ? `${data.scanned_latitude}, ${data.scanned_longitude}`
+                          : "-"}
+                      </Td>
+                      <Td>
+                        {data.distance}
+                      </Td>
+                      <Td>
+                        {data.variation !== "-" ? `${data.variation} ft` : "-"}
+                      </Td>
                       <Td>{data.user_name}</Td>
                       <Td>{data.scanned_date || "-"}</Td>
                       <Td>{data.scanned_time || "-"}</Td>

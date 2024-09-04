@@ -34,7 +34,7 @@ export default function Home() {
         <VStack spacing={4} align="stretch">
           <Card>
             <CardHeader>
-              <Heading size="md">Asset Status </Heading>
+              <Heading size="md">View Asset Status </Heading>
             </CardHeader>
             <CardBody>
               <Link
@@ -50,7 +50,7 @@ export default function Home() {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Survey report</Heading>
+              <Heading size="md">Download survey report</Heading>
             </CardHeader>
             <CardBody>
               <Link
@@ -66,7 +66,7 @@ export default function Home() {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Cleaning Report</Heading>
+              <Heading size="md">Download cleaning Report</Heading>
             </CardHeader>
             <CardBody>
               <Link
@@ -82,7 +82,7 @@ export default function Home() {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Reports by variation</Heading>
+              <Heading size="md">View geolocation exception</Heading>
             </CardHeader>
             <CardBody>
               <Link
@@ -93,6 +93,22 @@ export default function Home() {
                 Link
               </Link>
               <Text mt={2}>To download reports by variation</Text>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Heading size="md">View/Resolve tickets cleaning survey</Heading>
+            </CardHeader>
+            <CardBody>
+              <Link
+                href="/client/dashboard/manager/survey-report-action"
+                color="teal.500"
+                fontSize="lg"
+              >
+                Link
+              </Link>
+              <Text mt={2}>To resolve cleaning reports tickets</Text>
             </CardBody>
           </Card>
         </VStack>
