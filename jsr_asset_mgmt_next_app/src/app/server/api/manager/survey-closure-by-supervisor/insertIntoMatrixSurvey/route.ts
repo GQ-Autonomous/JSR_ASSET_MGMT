@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    let { code, date, average_rating, remarks, description, user_id } = await req.json();
-    console.log({ code, date, average_rating, remarks, description, user_id });
+    let { code, date, average_rating, remarks, description, user_id, resolve_date_time } = await req.json();
+    console.log({ code, date, average_rating, remarks, description, user_id, resolve_date_time });
 
     if (description) {
         description = ' '
@@ -15,8 +15,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     await pool.request()
       .query(`
         INSERT INTO tata_asset_mgmt.jusco_asset_mgmt.matrix_survey_close 
-        (average_rating, code, survey_date, remarks, description, user_id)
-        VALUES ('${average_rating}', '${code}', '${date}', '${remarks}', '${description}', '${user_id}');
+        (average_rating, code, survey_date, remarks, description, user_id, resolve_date_time)
+        VALUES ('${average_rating}', '${code}', '${date}', '${remarks}', '${description}', '${user_id}','${resolve_date_time}');
       `);
 
     return NextResponse.json({ message: "Data inserted successfully" }, { status: 201 });

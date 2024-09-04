@@ -48,6 +48,7 @@ const SurveyReportAction = () => {
   const [supervisor, setSupervisor] = useState("");
   const toast = useToast();
   const today = new Date();
+  const [selectedDate, setSelectedDate] = useState("");
 
   const getSupervisors = async () => {
     try {
@@ -172,6 +173,7 @@ const SurveyReportAction = () => {
           date: formattedDate, // Use formattedDate here
           average_rating: selectedSurvey.average_rating,
           remarks,
+          resolve_date_time: selectedDate
         }
       );
 
@@ -384,6 +386,30 @@ const SurveyReportAction = () => {
                     </option>
                   ))}
                 </Select>
+              </FormControl>
+
+              <FormControl mt={4} position="relative">
+                <FormLabel>Date</FormLabel>
+                <Input
+                  placeholder="Select date"
+                  value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
+                  onClick={() => setCalendarOpen(true)}
+                  readOnly
+                />
+                {calendarOpen && (
+                  <Box position="absolute" zIndex={10}>
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => {
+                        setSelectedDate(date);
+                        setCalendarOpen(false);
+                      }}
+                      onClickOutside={() => setCalendarOpen(false)}
+                      inline
+                      dateFormat="yyyy-MM-dd"
+                    />
+                  </Box>
+                )}
               </FormControl>
 
               <FormControl mt={4}>
